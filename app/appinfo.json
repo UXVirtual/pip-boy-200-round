@@ -1,0 +1,34 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        "location",
+        "configurable"
+    ],
+    "companyName": "UXVirtual",
+    "longName": "Pip-Boy 200",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/bg.png",
+                "name": "bg_image",
+                "type": "png"
+            },
+            {
+                "file": "fonts/BebasNeue.otf",
+                "name": "BebasNeue_18",
+                "type": "font"
+            }
+        ]
+    },
+    "sdkVersion": "3",
+    "shortName": "PipBoy",
+    "targetPlatforms": [
+        "chalk"
+    ],
+    "uuid": "dc356f74-5375-462a-ae8e-63e8e4c14c2e",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
