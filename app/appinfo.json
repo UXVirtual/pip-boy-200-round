@@ -16,7 +16,12 @@
             },
             {
                 "file": "fonts/BebasNeue.otf",
-                "name": "BebasNeue_18",
+                "name": "FONT_BEBASNEUE_18",
+                "type": "font"
+            },
+            {
+                "file": "fonts/BebasNeue.otf",
+                "name": "FONT_BEBASNEUE_60",
                 "type": "font"
             }
         ]
@@ -29,6 +34,6 @@
     "uuid": "dc356f74-5375-462a-ae8e-63e8e4c14c2e",
     "versionLabel": "1.0",
     "watchapp": {
-        "watchface": false
+        "watchface": true
     }
 }
