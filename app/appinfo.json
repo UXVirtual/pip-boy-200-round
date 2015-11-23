@@ -15,6 +15,11 @@
                 "type": "png"
             },
             {
+                "file": "images/menu-image.png",
+                "name": "menu_image",
+                "type": "png"
+            },
+            {
                 "file": "fonts/BebasNeue.otf",
                 "name": "FONT_BEBASNEUE_18",
                 "type": "font"
