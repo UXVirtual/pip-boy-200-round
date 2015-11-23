@@ -1,8 +1,6 @@
 {
     "appKeys": {},
     "capabilities": [
-        "location",
-        "configurable"
     ],
     "companyName": "UXVirtual",
     "longName": "Pip-Boy 200",
@@ -37,7 +35,7 @@
         "chalk"
     ],
     "uuid": "dc356f74-5375-462a-ae8e-63e8e4c14c2e",
-    "versionLabel": "1.0",
+    "versionLabel": "1.0.1",
     "watchapp": {
         "watchface": true
     }
