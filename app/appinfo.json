@@ -7,6 +7,11 @@
     "resources": {
         "media": [
             {
+                "file": "images/bg-round.png",
+                "name": "bg_image_round",
+                "type": "png"
+            },
+            {
                 "file": "images/bg.png",
                 "name": "bg_image",
                 "type": "png"
@@ -31,10 +36,11 @@
     "sdkVersion": "3",
     "shortName": "PipBoy",
     "targetPlatforms": [
-        "chalk"
+        "chalk",
+        "basalt"
     ],
     "uuid": "dc356f74-5375-462a-ae8e-63e8e4c14c2e",
-    "versionLabel": "1.1",
+    "versionLabel": "1.2",
     "watchapp": {
         "watchface": true
     }

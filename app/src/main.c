@@ -118,7 +118,14 @@ static void set_text_to_window() {
 
   //Time TextLayer 
   s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BEBASNEUE_60));
-  s_time_layer = text_layer_create(GRect(33, 50, 108, 63));
+
+  #if defined(PBL_RECT)
+   s_time_layer = text_layer_create(GRect(18, 46, 108, 63));
+  #elif defined(PBL_ROUND)
+   s_time_layer = text_layer_create(GRect(33, 50, 108, 63));
+  #endif
+
+
   text_layer_set_background_color(s_time_layer, GColorClear);
     text_layer_set_text_color(s_time_layer, GColorGreen);
   text_layer_set_text(s_time_layer, "0000");
@@ -136,7 +143,14 @@ static void set_text_to_window() {
   
   // Create current date TextLayer 
   s_date_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BEBASNEUE_18));
-  current_date_layer = text_layer_create(GRect(29, 39, 120, 30));
+
+  #if defined(PBL_RECT)
+   current_date_layer = text_layer_create(GRect(12, 34, 120, 30));
+  #elif defined(PBL_ROUND)
+   current_date_layer = text_layer_create(GRect(29, 39, 120, 30));
+  #endif
+
+
   text_layer_set_background_color(current_date_layer, GColorClear);
   text_layer_set_text_color(current_date_layer, GColorGreen);
   text_layer_set_text(current_date_layer, "00.00 000");
@@ -146,8 +160,17 @@ static void set_text_to_window() {
 
 static void main_window_load(Window *window) {
   //ACTION: Create GBitmap, then set to created BitmapLayer
-  clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image);
-  clock_layer = bitmap_layer_create(GRect(0, 0, 180, 180));
+
+  #if defined(PBL_RECT)
+    clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image);
+    clock_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
+  #elif defined(PBL_ROUND)
+    clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round);
+    clock_layer = bitmap_layer_create(GRect(0, 0, 180, 180));
+  #endif
+
+
+
   bitmap_layer_set_bitmap(clock_layer, clock_bitmap);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(clock_layer));
 
