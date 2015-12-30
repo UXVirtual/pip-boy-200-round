@@ -17,6 +17,12 @@
                 "type": "png"
             },
             {
+                "file": "images/bg-bw.png",
+                "name": "bg_image_bw",
+                "type": "png"
+            },
+            {
+                "menuIcon": true,
                 "file": "images/menu-image.png",
                 "name": "menu_image",
                 "type": "png"
@@ -37,7 +43,8 @@
     "shortName": "PipBoy",
     "targetPlatforms": [
         "chalk",
-        "basalt"
+        "basalt",
+        "aplite"
     ],
     "uuid": "dc356f74-5375-462a-ae8e-63e8e4c14c2e",
     "versionLabel": "1.2",

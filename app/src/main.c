@@ -127,7 +127,13 @@ static void set_text_to_window() {
 
 
   text_layer_set_background_color(s_time_layer, GColorClear);
-    text_layer_set_text_color(s_time_layer, GColorGreen);
+
+  #if defined(PBL_BW)
+   text_layer_set_text_color(s_time_layer, GColorWhite);
+  #else
+   text_layer_set_text_color(s_time_layer, GColorGreen);
+  #endif
+
   text_layer_set_text(s_time_layer, "0000");
   text_layer_set_font(s_time_layer, s_time_font);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
@@ -152,7 +158,14 @@ static void set_text_to_window() {
 
 
   text_layer_set_background_color(current_date_layer, GColorClear);
-  text_layer_set_text_color(current_date_layer, GColorGreen);
+
+  #if defined(PBL_BW)
+   text_layer_set_text_color(current_date_layer, GColorWhite);
+  #else
+   text_layer_set_text_color(current_date_layer, GColorGreen);
+  #endif
+
+
   text_layer_set_text(current_date_layer, "00.00 000");
   text_layer_set_font(current_date_layer, s_date_font);
   text_layer_set_text_alignment(current_date_layer, GTextAlignmentCenter);
@@ -161,7 +174,10 @@ static void set_text_to_window() {
 static void main_window_load(Window *window) {
   //ACTION: Create GBitmap, then set to created BitmapLayer
 
-  #if defined(PBL_RECT)
+  #if defined(PBL_BW)
+    clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_bw);
+    clock_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
+  #elif defined(PBL_RECT)
     clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image);
     clock_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
   #elif defined(PBL_ROUND)
