@@ -27,6 +27,36 @@ static char timephase_buffer[] = "00";
 
 static char timeOfDay;
 
+static void set_clock_bitmap_bw(char timeOfDay){
+    if(clock_is_24h_style() == true){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_bw);
+    }else if(timeOfDay == 'A'){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_bw_am);
+    }else if(timeOfDay == 'P'){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_bw_pm);
+    }
+}
+
+static void set_clock_bitmap_rect(){
+    if(clock_is_24h_style() == true){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image);
+    }else if(timeOfDay == 'A'){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_am);
+    }else if(timeOfDay == 'P'){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_pm);
+    }
+}
+
+static void set_clock_bitmap_round(){
+    if(clock_is_24h_style() == true){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round);
+    }else if(timeOfDay == 'A'){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round_am);
+    }else if(timeOfDay == 'P'){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round_pm);
+    }
+}
+
 static void update_time() {
   // Get a tm structure
   time_t temp = time(NULL); 
@@ -44,12 +74,26 @@ static void update_time() {
 
   }
 
+  char newTimeOfDay = timephase_buffer[0];
 
+  if(newTimeOfDay != timeOfDay){
+    //time of day has changed, reload view
+    timeOfDay = timephase_buffer[0];
+    #if defined(PBL_BW)
+        set_clock_bitmap_bw(timeOfDay);
+    #elif defined(PBL_RECT)
+        set_clock_bitmap_rect(timeOfDay);
+    #elif defined(PBL_ROUND)
+        set_clock_bitmap_round(timeOfDay);
+    #endif
 
-  timeOfDay = timephase_buffer[0];
+      //update clock layer with latest changes to clock bitmap so they are visible on screen
+      bitmap_layer_set_bitmap(clock_layer, clock_bitmap);
+  }else{
+    timeOfDay = timephase_buffer[0];
+  }
 
-
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "c2: %d", timeOfDay);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "c2: %d", timeOfDay);
 
   //tod = strftime(timephase_buffer, sizeof("0"), "%p", tick_time);
 
@@ -135,7 +179,7 @@ static void set_text_to_window() {
   #if defined(PBL_RECT)
    s_time_layer = text_layer_create(GRect(18, 46, 108, 63));
   #elif defined(PBL_ROUND)
-   s_time_layer = text_layer_create(GRect(33, 50, 108, 63));
+   s_time_layer = text_layer_create(GRect(36, 50, 108, 63));
   #endif
 
 
@@ -194,44 +238,23 @@ static void main_window_load(Window *window) {
   strftime(timephase_buffer, sizeof("00"), "%p", tick_time);
 
   timeOfDay = timephase_buffer[0];
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "c2: %d", timeOfDay);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "c2: %d", timeOfDay);
 
   #if defined(PBL_BW)
-    if(clock_is_24h_style() == true){
-        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_bw);
-    }else if(timeOfDay == 'A'){
-        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_bw_am);
-    }else if(timeOfDay == 'P'){
-        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_bw_pm);
-    }else{
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "Could not load correct bg: %d", timeOfDay);
-    }
 
+    set_clock_bitmap_bw(timeOfDay);
     clock_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
+
   #elif defined(PBL_RECT)
 
-
-    if(clock_is_24h_style() == true){
-        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image);
-    }else if(timeOfDay == 'A'){
-        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_am);
-    }else if(timeOfDay == 'P'){
-        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_pm);
-    }
-
+    set_clock_bitmap_rect(timeOfDay);
     clock_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
+
   #elif defined(PBL_ROUND)
 
-    if(clock_is_24h_style() == true){
-        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round);
-    }else if(timeOfDay == 'A'){
-        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round_am);
-    }else if(timeOfDay == 'P'){
-        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round_pm);
-    }
-
-
+    set_clock_bitmap_round(timeOfDay);
     clock_layer = bitmap_layer_create(GRect(0, 0, 180, 180));
+
   #endif
 
   bitmap_layer_set_bitmap(clock_layer, clock_bitmap);
