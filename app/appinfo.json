@@ -12,13 +12,43 @@
                 "type": "png"
             },
             {
+                "file": "images/bg-round-am.png",
+                "name": "bg_image_round_am",
+                "type": "png"
+            },
+            {
+                "file": "images/bg-round-pm.png",
+                "name": "bg_image_round_pm",
+                "type": "png"
+            },
+            {
                 "file": "images/bg.png",
                 "name": "bg_image",
                 "type": "png"
             },
             {
+                "file": "images/bg-am.png",
+                "name": "bg_image_am",
+                "type": "png"
+            },
+            {
+                "file": "images/bg-pm.png",
+                "name": "bg_image_pm",
+                "type": "png"
+            },
+            {
                 "file": "images/bg-bw.png",
                 "name": "bg_image_bw",
+                "type": "png"
+            },
+            {
+                "file": "images/bg-bw-am.png",
+                "name": "bg_image_bw_am",
+                "type": "png"
+            },
+            {
+                "file": "images/bg-bw-pm.png",
+                "name": "bg_image_bw_pm",
                 "type": "png"
             },
             {

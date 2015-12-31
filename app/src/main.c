@@ -23,25 +23,38 @@ static GBitmap *bt_bitmap;*/
 // Create a long-lived buffer
 static char buffer[] = "0000";
 static char current_date_buffer[] = "00.00 000";
-//static char timephase_buffer[] = "00";
+static char timephase_buffer[] = "00";
+
+static char timeOfDay;
 
 static void update_time() {
   // Get a tm structure
   time_t temp = time(NULL); 
   struct tm *tick_time = localtime(&temp);
 
-  
-  //if(clock_is_24h_style() == true) {
+  if(clock_is_24h_style() == true) {
     //Use 2h hour format
     strftime(buffer, sizeof("0000"), "%H%M", tick_time);
-    //strftime(timephase_buffer, sizeof("00"), "  ", tick_time);
+    strftime(timephase_buffer, sizeof("00"), "  ", tick_time);
       
-  //} else {
+  } else {
     //Use 12 hour format
-  //  strftime(buffer, sizeof("0000"), "%I%M", tick_time);
-  //  strftime(timephase_buffer, sizeof("00"), "%p", tick_time);
-  //}
-  
+    strftime(buffer, sizeof("0000"), "%I%M", tick_time);
+    strftime(timephase_buffer, sizeof("00"), "%p", tick_time);
+
+  }
+
+
+
+  timeOfDay = timephase_buffer[0];
+
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "c2: %d", timeOfDay);
+
+  //tod = strftime(timephase_buffer, sizeof("0"), "%p", tick_time);
+
+
+
   strftime(current_date_buffer, sizeof("000 00.00"), "%a %d.%m", tick_time);
 
   int i=0;
@@ -174,18 +187,52 @@ static void set_text_to_window() {
 static void main_window_load(Window *window) {
   //ACTION: Create GBitmap, then set to created BitmapLayer
 
+// Get a tm structure
+  time_t temp = time(NULL);
+  struct tm *tick_time = localtime(&temp);
+
+  strftime(timephase_buffer, sizeof("00"), "%p", tick_time);
+
+  timeOfDay = timephase_buffer[0];
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "c2: %d", timeOfDay);
+
   #if defined(PBL_BW)
-    clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_bw);
+    if(clock_is_24h_style() == true){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_bw);
+    }else if(timeOfDay == 'A'){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_bw_am);
+    }else if(timeOfDay == 'P'){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_bw_pm);
+    }else{
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Could not load correct bg: %d", timeOfDay);
+    }
+
     clock_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
   #elif defined(PBL_RECT)
-    clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image);
+
+
+    if(clock_is_24h_style() == true){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image);
+    }else if(timeOfDay == 'A'){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_am);
+    }else if(timeOfDay == 'P'){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_pm);
+    }
+
     clock_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
   #elif defined(PBL_ROUND)
-    clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round);
+
+    if(clock_is_24h_style() == true){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round);
+    }else if(timeOfDay == 'A'){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round_am);
+    }else if(timeOfDay == 'P'){
+        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round_pm);
+    }
+
+
     clock_layer = bitmap_layer_create(GRect(0, 0, 180, 180));
   #endif
-
-
 
   bitmap_layer_set_bitmap(clock_layer, clock_bitmap);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(clock_layer));
