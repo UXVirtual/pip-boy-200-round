@@ -284,7 +284,7 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
 
           graphics_context_set_stroke_width(ctx, 4);
           graphics_context_set_stroke_color(ctx, GColorIslamicGreen); //GColorIslamicGreen
-          graphics_draw_arc(ctx, GRect(0, 0, bounds.size.w, bounds.size.h), GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE((lastSecond/60.0)*360));
+          graphics_draw_arc(ctx, bounds, GOvalScaleModeFillCircle, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE((lastSecond/60.0)*360));
 
 
 
