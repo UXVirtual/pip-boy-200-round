@@ -13,7 +13,10 @@ static GFont s_time_font;
 static GFont s_date_font;
 
 static BitmapLayer *clock_layer;
-static Layer *s_canvas_layer;
+#if defined(PBL_ROUND)
+    static Layer *s_canvas_layer;
+#endif
+
 /*static BitmapLayer *batt_layer;
 static BitmapLayer *bt_layer;*/
 
@@ -186,7 +189,10 @@ static void update_time() {
   //text_layer_set_text(timephase_layer, timephase_buffer);
   text_layer_set_text(current_date_layer, current_date_buffer);
 
-  layer_mark_dirty(s_canvas_layer);
+  #if defined(PBL_ROUND)
+    layer_mark_dirty(s_canvas_layer);
+  #endif
+
 }
 
 static void set_text_to_window() {
@@ -390,8 +396,12 @@ static void main_window_unload(Window *window) {
   /*bitmap_layer_destroy(batt_layer);
   bitmap_layer_destroy(bt_layer);*/
 
-  // Destroy Layer
-  layer_destroy(s_canvas_layer);
+  #if defined(PBL_ROUND)
+    // Destroy Layer
+    layer_destroy(s_canvas_layer);
+  #endif
+
+
   
   // Destroy TextLayer
   text_layer_destroy(s_time_layer);
