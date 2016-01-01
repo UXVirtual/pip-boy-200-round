@@ -13,10 +13,12 @@ static GFont s_time_font;
 static GFont s_date_font;
 
 static BitmapLayer *clock_layer;
+static Layer *s_canvas_layer;
 /*static BitmapLayer *batt_layer;
 static BitmapLayer *bt_layer;*/
 
 static GBitmap *clock_bitmap;
+static GBitmap *s_bitmap;
 /*static GBitmap *batt_bitmap;
 static GBitmap *bt_bitmap;*/
 
@@ -26,6 +28,9 @@ static char current_date_buffer[] = "00.00 000";
 static char timephase_buffer[] = "00";
 
 static char timeOfDay;
+
+static int lastSecond = 0;
+static bool doSecondIndicatorUpdate = false;
 
 static void set_clock_bitmap_bw(char timeOfDay){
     if(clock_is_24h_style() == true){
@@ -73,6 +78,17 @@ static void update_time() {
     strftime(timephase_buffer, sizeof("00"), "%p", tick_time);
 
   }
+
+  //store last second
+
+  //if(lastSecond != tick_time->tm_sec){
+  //  lastSecond = tick_time->tm_sec;
+  //  doSecondIndicatorUpdate = true;
+  //}else{
+    lastSecond = tick_time->tm_sec;
+  //}
+
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Second: %d", lastSecond);
 
   char newTimeOfDay = timephase_buffer[0];
 
@@ -165,10 +181,12 @@ static void update_time() {
   }*/
   
   //bitmap_layer_set_bitmap(batt_layer, batt_bitmap);
-    
+
   text_layer_set_text(s_time_layer, buffer);
   //text_layer_set_text(timephase_layer, timephase_buffer);
   text_layer_set_text(current_date_layer, current_date_buffer);
+
+  layer_mark_dirty(s_canvas_layer);
 }
 
 static void set_text_to_window() {
@@ -228,6 +246,64 @@ static void set_text_to_window() {
   text_layer_set_text_alignment(current_date_layer, GTextAlignmentCenter);
 }
 
+static char* floatToString(char* buffer, int bufferSize, double number)
+{
+    char decimalBuffer[5];
+
+    snprintf(buffer, bufferSize, "%d", (int)number);
+    strcat(buffer, ".");
+
+    snprintf(decimalBuffer, 5, "%02d", (int)((double)(number - (int)number) * (double)100));
+    strcat(buffer, decimalBuffer);
+
+    return buffer;
+}
+
+static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
+
+    //if(doSecondIndicatorUpdate == true){
+        //APP_LOG(APP_LOG_LEVEL_DEBUG, "Updating canvas");
+
+        // Get a tm structure
+          //time_t temp = time(NULL);
+          //struct tm *tick_time = localtime(&temp);
+
+          //strftime(buffer, sizeof("0000"), "%H%M", tick_time);
+          //strftime(timephase_buffer, sizeof("00"), "  ", tick_time);
+
+          GRect bounds = layer_get_bounds(this_layer);
+
+          // Get the center of the screen (non full-screen)
+          //GPoint center = GPoint(bounds.size.w / 2, (bounds.size.h / 2));
+
+          //GOvalScaleModeFitCircle - Places the largest possible fully visible circle in the center of a rectangle.
+          //GOvalScaleModeFillCircle - Places the smallest possible circle in the center of a rectangle so that the rectangle is fully inside the circle.
+
+          //APP_LOG(APP_LOG_LEVEL_DEBUG, floatToString("00",sizeof("00"),(lastSecond/60.0)*360));
+          //APP_LOG(APP_LOG_LEVEL_DEBUG, "Percentage: %d", ceil((lastSecond/60.0)*360));
+
+          graphics_context_set_stroke_width(ctx, 4);
+          graphics_context_set_stroke_color(ctx, GColorIslamicGreen); //GColorIslamicGreen
+          graphics_draw_arc(ctx, GRect(0, 0, bounds.size.w, bounds.size.h), GOvalScaleModeFitCircle, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE((lastSecond/60.0)*360));
+
+
+
+          // Draw the 'loop' of the 'P'
+          //graphics_context_set_fill_color(ctx, GColorBlack);
+          //graphics_fill_circle(ctx, center, 40);
+          //graphics_context_set_fill_color(ctx, GColorWhite);
+          //graphics_fill_circle(ctx, center, 35);
+
+          // Draw the 'stalk'
+          //graphics_context_set_fill_color(ctx, GColorBlack);
+          //graphics_fill_rect(ctx, GRect(32, 40, 5, 100), 0, GCornerNone);
+
+          //doSecondIndicatorUpdate = false;
+    //}else{
+    //    APP_LOG(APP_LOG_LEVEL_DEBUG, "Skipping canvas update");
+    //}
+}
+
 static void main_window_load(Window *window) {
   //ACTION: Create GBitmap, then set to created BitmapLayer
 
@@ -244,21 +320,37 @@ static void main_window_load(Window *window) {
 
     set_clock_bitmap_bw(timeOfDay);
     clock_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
+    //s_canvas_layer = layer_create(GRect(0, 0, 144, 168));
 
   #elif defined(PBL_RECT)
 
     set_clock_bitmap_rect(timeOfDay);
     clock_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
+    //s_canvas_layer = layer_create(GRect(0, 0, 144, 168));
 
   #elif defined(PBL_ROUND)
 
     set_clock_bitmap_round(timeOfDay);
     clock_layer = bitmap_layer_create(GRect(0, 0, 180, 180));
+    s_canvas_layer = layer_create(GRect(26, 25, 130, 130));
+
+    // Set LayerUpdateProc to draw bitmap
+    layer_set_update_proc(s_canvas_layer, canvas_update_proc);
 
   #endif
 
   bitmap_layer_set_bitmap(clock_layer, clock_bitmap);
+
+
+
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(clock_layer));
+
+  #if defined(PBL_ROUND)
+    //cast s_canvas_layer to BitmapLayer so we can use it with bitmap_layer_get_layer() as s_canvas_layer is a Layer primitive
+    layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer((BitmapLayer *) s_canvas_layer));
+  #endif
+
+
 
   //BATTERY: Create GBitmap, then set to created BitmapLayer
   /*batt_bitmap = gbitmap_create_with_resource(RESOURCE_ID_batt100);
@@ -271,8 +363,6 @@ static void main_window_load(Window *window) {
   bt_layer = bitmap_layer_create(GRect( 98, 0, 46, 168));
   bitmap_layer_set_bitmap(bt_layer, bt_bitmap);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(bt_layer));*/
-  
-
   
   set_text_to_window();
     
@@ -299,6 +389,9 @@ static void main_window_unload(Window *window) {
   bitmap_layer_destroy(clock_layer);
   /*bitmap_layer_destroy(batt_layer);
   bitmap_layer_destroy(bt_layer);*/
+
+  // Destroy Layer
+  layer_destroy(s_canvas_layer);
   
   // Destroy TextLayer
   text_layer_destroy(s_time_layer);
