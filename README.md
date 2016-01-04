@@ -23,6 +23,8 @@ A Fallout Pip Boy app for Pebble Round
 
 1.  Run `gulp watch` from the `online` folder.
 
+2.  Open the following URL in the browser: http://localhost:9000
+
 ## Developers
 
 1.  Run `jspm install PACKAGE_NAME` to install `jspm` packages
