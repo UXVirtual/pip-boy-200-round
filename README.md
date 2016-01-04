@@ -9,6 +9,10 @@ A Fallout Pip Boy app for Pebble Round
 
 2.  Install the Pebble SDK v3.6 that supports Pebble Round: `brew install https://raw.githubusercontent.com/youtux/homebrew-pebble-sdk/cadf266b005bdd77219358a6ad428ad533dd54cf/pebble-sdk.rb`
 
+3.  Install `nodejs` 4.x from https://nodejs.org/en/
+
+4.  Run `npm install` in the `online` folder to install all dependencies for the watchface configuration page.
+
 ## Run in simulator
 
 1.  Customise `scripts/build-simulator.command` to set the project path to the correct location on your computer.

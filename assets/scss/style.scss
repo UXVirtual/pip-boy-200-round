@@ -1,0 +1,9 @@
+@import url(http://fonts.googleapis.com/css?family=Raleway:400,700,300);
+$font-family-base: 'Raleway', sans-serif;
+// Import bootstrap and fontawesome
+@import "bootstrap-sass/assets/stylesheets/bootstrap";
+@import "font-awesome/scss/font-awesome";
+
+h1{
+  font-weight: bold;
+}
