@@ -1,7 +1,6 @@
 app/build
 app/.lock-waf_darwin_build
 .idea
-online/bower_components
-public/jspm_packages
-node_modules
-public/assets
+online/public/jspm_packages
+online/node_modules
+online/public/assets

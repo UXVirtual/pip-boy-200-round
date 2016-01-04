@@ -13,8 +13,16 @@ A Fallout Pip Boy app for Pebble Round
 
 4.  Run `npm install` in the `online` folder to install all dependencies for the watchface configuration page.
 
-## Run in simulator
+### Run in Pebble simulator
 
 1.  Customise `scripts/build-simulator.command` to set the project path to the correct location on your computer.
 
 2.  Run `build-simulator.command`
+
+### Run config page in browser with livereload
+
+1.  Run `gulp watch` from the `online` folder.
+
+## Developers
+
+1.  Run `jspm install PACKAGE_NAME` to install `jspm` packages
