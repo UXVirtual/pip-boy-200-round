@@ -2,5 +2,5 @@ app/build
 app/.lock-waf_darwin_build
 .idea
 online/public/jspm_packages
-online/node_modules
+node_modules
 online/public/assets

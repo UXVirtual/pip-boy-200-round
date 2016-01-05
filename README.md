@@ -1,5 +1,5 @@
-# Pip-Boy 200 Round
-A Fallout Pip Boy app for Pebble Round
+# Pip-Boy 200
+A Fallout themed Pip Boy watchface for Pebble OG, Pebble Time and Pebble Time Round.
 
 ## Installation
 

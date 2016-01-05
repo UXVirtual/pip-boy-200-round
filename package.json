@@ -1,4 +1,17 @@
 {
+  "name": "pip-boy-200",
+  "version": "1.4.0",
+  "description": "Pip-Boy 200 Pebble watchface.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HAZARDU5/pip-boy-200-round.git"
+  },
+  "author": "Federico Zivolo",
+  "bugs": {
+    "url": "https://github.com/HAZARDU5/pip-boy-200-round/issues"
+  },
+  "license": "MIT",
+  "private": true,
   "devDependencies": {
     "browser-sync": "^1.8.1",
     "conventional-changelog": "0.0.11",
@@ -28,7 +41,8 @@
     "rsyncwrapper": "^0.4.3",
     "run-sequence": "^1.0.2",
     "vinyl-paths": "^1.0.0",
-    "yargs": "^2.1.1"
+    "yargs": "^2.1.1",
+    "jspm": "^0.16.19"
   },
   "scripts": {
     "gulp": "gulp",
@@ -53,8 +67,9 @@
   },
   "dependencies": {
     "bootstrap": "^3.3.6",
+    "bootstrap-material-design": "^0.3.0",
     "bootstrap-sass": "^3.3.6",
-    "font-awesome": "^4.5.0",
-    "jspm": "^0.16.19"
+    "font-awesome": "^4.5.0"
+
   }
 }

@@ -40,7 +40,7 @@ gulp.task('build-css', function () {
     return gulp.src(paths.style)
         .pipe(plumber({errorHandler: notify.onError('SASS Error: <%= error.message %>')}))
         .pipe(sourcemaps.init())
-        .pipe(sass({includePaths: ['styles',process.cwd() + '/node_modules'].concat(neat)}))
+        .pipe(sass({includePaths: ['styles',process.cwd() + '/../node_modules'].concat(neat)}))
         .pipe(autoprefixer())
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(paths.output + '/css'))
