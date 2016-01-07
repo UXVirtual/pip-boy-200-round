@@ -11,7 +11,9 @@ A Fallout themed Pip Boy watchface for Pebble OG, Pebble Time and Pebble Time Ro
 
 3.  Install `nodejs` 4.x from https://nodejs.org/en/
 
-4.  Run `npm install` in the `online` folder to install all dependencies for the watchface configuration page.
+4.  Run `npm install` in the root of the repository to install all dependencies for the watchface configuration page.
+
+5.  Run `bower install` in the root of the repository to install all JS dependencies.
 
 ### Run in Pebble simulator
 
@@ -24,7 +26,3 @@ A Fallout themed Pip Boy watchface for Pebble OG, Pebble Time and Pebble Time Ro
 1.  Run `gulp watch` from the `online` folder.
 
 2.  Open the following URL in the browser: http://localhost:9000
-
-## Developers
-
-1.  Run `jspm install PACKAGE_NAME` to install `jspm` packages

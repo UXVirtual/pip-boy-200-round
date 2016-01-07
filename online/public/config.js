@@ -16,6 +16,7 @@ System.config({
     "babel": "npm:babel-core@5.8.34",
     "babel-runtime": "npm:babel-runtime@5.8.34",
     "bootstrap": "github:twbs/bootstrap@3.3.6",
+    "bootstrap-material-design": "npm:bootstrap-material-design@0.3.0",
     "core-js": "npm:core-js@1.2.6",
     "jquery": "npm:jquery@1.11.3",
     "github:jspm/nodelibs-assert@0.1.0": {
@@ -37,6 +38,16 @@ System.config({
       "util": "npm:util@0.10.3"
     },
     "npm:babel-runtime@5.8.34": {
+      "process": "github:jspm/nodelibs-process@0.1.2"
+    },
+    "npm:bootstrap-material-design@0.3.0": {
+      "bootstrap": "npm:bootstrap@3.3.6",
+      "jquery": "npm:jquery@1.11.3",
+      "process": "github:jspm/nodelibs-process@0.1.2"
+    },
+    "npm:bootstrap@3.3.6": {
+      "fs": "github:jspm/nodelibs-fs@0.1.2",
+      "path": "github:jspm/nodelibs-path@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:core-js@1.2.6": {

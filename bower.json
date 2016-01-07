@@ -1,0 +1,25 @@
+{
+  "name": "pip-boy-200",
+  "description": "Pip-Boy 200 Pebble watchface.",
+  "main": "main.js",
+  "authors": [
+    "Michael Andrew"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/HAZARDU5/pip-boy-200-round",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "package.json",
+    "src"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.6",
+    "bootstrap-material-design": "~0.5.7"
+  }
+}

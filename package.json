@@ -35,14 +35,14 @@
     "gulp-watch": "^4.3.5",
     "gulp-yuidoc": "^0.1.2",
     "jshint-stylish": "^1.0.0",
+    "jspm": "^0.16.19",
     "node-neat": "^1.7.2",
     "object.assign": "^1.0.3",
     "require-dir": "^0.1.0",
     "rsyncwrapper": "^0.4.3",
     "run-sequence": "^1.0.2",
     "vinyl-paths": "^1.0.0",
-    "yargs": "^2.1.1",
-    "jspm": "^0.16.19"
+    "yargs": "^2.1.1"
   },
   "scripts": {
     "gulp": "gulp",
@@ -53,10 +53,11 @@
   },
   "jspm": {
     "directories": {
-      "baseURL": "public"
+      "baseURL": "online/public"
     },
     "dependencies": {
       "bootstrap": "github:twbs/bootstrap@^3.3.6",
+      "bootstrap-material-design": "npm:bootstrap-material-design@^0.3.0",
       "jquery": "npm:jquery@^1.11.3"
     },
     "devDependencies": {
@@ -70,6 +71,5 @@
     "bootstrap-material-design": "^0.3.0",
     "bootstrap-sass": "^3.3.6",
     "font-awesome": "^4.5.0"
-
   }
 }
