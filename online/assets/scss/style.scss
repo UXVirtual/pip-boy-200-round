@@ -1,11 +1,15 @@
-@import url(http://fonts.googleapis.com/css?family=Raleway:400,700,300);
-$font-family-base: 'Raleway', sans-serif;
+//@import url(http://fonts.googleapis.com/css?family=Roboto:300,400,500,700);
+//@import url(https://fonts.googleapis.com/icon?family=Material+Icons);
+$font-family-base: 'Roboto', sans-serif;
 // Import bootstrap and fontawesome
-@import "bootstrap-sass/assets/stylesheets/bootstrap";
-@import "font-awesome/scss/font-awesome";
+//@import "bootstrap-sass/assets/stylesheets/bootstrap";
+//@import "font-awesome/scss/font-awesome";
+//@import "bootstrap-material-design/sass/material";
+//@import "bootstrap-material-design/sass/ripples";
+
 
 h1{
-  font-weight: bold;
+
 }
 
 body{

@@ -1,4 +1,5 @@
 $(document).ready(function(){
-    $.material.init()
+    console.log('document is ready')
+    $.material.init();
 });
 
