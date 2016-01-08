@@ -1,6 +1,9 @@
 #include <pebble.h>
 #include <stdio.h>
 #include <ctype.h>
+
+#define KEY_BACKGROUND_COLOR 1
+#define KEY_ANIMATE_SECONDS 1
   
 static Window *s_main_window;
 
@@ -25,6 +28,8 @@ static GBitmap *s_bitmap;
 /*static GBitmap *batt_bitmap;
 static GBitmap *bt_bitmap;*/
 
+static bool animate_seconds = false;
+
 // Create a long-lived buffer
 static char buffer[] = "0000";
 static char current_date_buffer[] = "00.00 000";
@@ -33,7 +38,6 @@ static char timephase_buffer[] = "00";
 static char timeOfDay;
 
 static int lastSecond = 0;
-static bool doSecondIndicatorUpdate = false;
 
 static void set_clock_bitmap_bw(char timeOfDay){
     if(clock_is_24h_style() == true){
@@ -83,13 +87,7 @@ static void update_time() {
   }
 
   //store last second
-
-  //if(lastSecond != tick_time->tm_sec){
-  //  lastSecond = tick_time->tm_sec;
-  //  doSecondIndicatorUpdate = true;
-  //}else{
-    lastSecond = tick_time->tm_sec;
-  //}
+  lastSecond = tick_time->tm_sec;
 
   //APP_LOG(APP_LOG_LEVEL_DEBUG, "Second: %d", lastSecond);
 
@@ -267,7 +265,9 @@ static char* floatToString(char* buffer, int bufferSize, double number)
 
 static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
 
-    //if(doSecondIndicatorUpdate == true){
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "c2: %d", animate_seconds);
+
+    if(animate_seconds == true){
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "Updating canvas");
 
         // Get a tm structure
@@ -305,13 +305,28 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
           //graphics_fill_rect(ctx, GRect(32, 40, 5, 100), 0, GCornerNone);
 
           //doSecondIndicatorUpdate = false;
-    //}else{
-    //    APP_LOG(APP_LOG_LEVEL_DEBUG, "Skipping canvas update");
-    //}
+    }else{
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Skipping canvas update");
+    }
+}
+
+static void set_background_and_text_color(int color) {
+  //GColor background_color = GColorFromHEX(color);
+  //window_set_background_color(s_main_window, background_color);
+  //text_layer_set_text_color(s_text_layer, gcolor_legible_over(background_color));
 }
 
 static void main_window_load(Window *window) {
   //ACTION: Create GBitmap, then set to created BitmapLayer
+
+  if (persist_read_int(KEY_BACKGROUND_COLOR)) {
+      int background_color = persist_read_int(KEY_BACKGROUND_COLOR);
+      set_background_and_text_color(background_color);
+    }
+
+  if (persist_read_bool(KEY_ANIMATE_SECONDS)) {
+    animate_seconds = persist_read_bool(KEY_ANIMATE_SECONDS);
+  }
 
 // Get a tm structure
   time_t temp = time(NULL);
@@ -380,6 +395,10 @@ static void main_window_load(Window *window) {
   update_time();
 }
 
+
+
+
+
 static void main_window_unload(Window *window) {
     
   fonts_unload_custom_font(s_time_font);
@@ -416,6 +435,41 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 static void bt_handler(bool connected) {
   
 }
+
+
+static void in_received_handler(DictionaryIterator *iter, void *context) {
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Got data from config page");
+
+
+  Tuple *background_color_t = dict_find(iter, KEY_BACKGROUND_COLOR);
+  Tuple *animate_seconds_t = dict_find(iter, KEY_ANIMATE_SECONDS);
+
+  if (background_color_t) {
+      int background_color = background_color_t->value->int32;
+
+      persist_write_int(KEY_BACKGROUND_COLOR, background_color);
+
+      set_background_and_text_color(background_color);
+    }
+
+  if (animate_seconds_t) {
+    animate_seconds = animate_seconds_t->value->int8;
+
+    persist_write_bool(KEY_ANIMATE_SECONDS, animate_seconds);
+  }
+}
+
+static void in_dropped_handler(AppMessageResult reason, void *context) {
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Problem receiving data from config page: %d",reason);
+}
+
+static void out_failed_handler(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Problem sending data: %d",reason);
+}
+
 static void init() {
   // Create main Window element and assign to pointer
   s_main_window = window_create();
@@ -432,6 +486,11 @@ static void init() {
   
   // Register with TickTimerService
   tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
+
+  app_message_register_inbox_dropped(in_dropped_handler);
+  app_message_register_outbox_failed(out_failed_handler);
+  app_message_register_inbox_received(in_received_handler);
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
 }
 
 static void deinit() {

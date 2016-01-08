@@ -1,7 +1,7 @@
 {
     "appKeys": {
-        "backgroundColor": 0,
-        "twentyFourHourFormat": 1
+        "backgroundColor": "green",
+        "animateSeconds": 1
     },
     "capabilities": [
         "configurable"

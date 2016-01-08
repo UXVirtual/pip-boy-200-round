@@ -3,8 +3,20 @@ $(document).ready(function(){
     $.material.init();
 
     loadOptions();
+    formHandler();
     submitHandler();
 });
+
+function formHandler(){
+
+    $("#config-form").bind('submit',function(e){
+        e.preventDefault();
+    })
+
+    $("#color-btn-group .btn").click(function () {
+        $("#backgroundColorPicker").val($(this).attr('data-color'));
+    });
+}
 
 function submitHandler() {
     var $submitButton = $('#submitButton');
@@ -19,25 +31,33 @@ function submitHandler() {
 
 function loadOptions() {
     var $backgroundColorPicker = $('#backgroundColorPicker');
-    var $timeFormatCheckbox = $('#timeFormatCheckbox');
+    var $animateSecondsCheckbox = $('#animateSecondsCheckbox');
+
+
 
     if (localStorage.backgroundColor) {
+        console.log('Background color: '+localStorage.backgroundColor);
         $backgroundColorPicker[0].value = localStorage.backgroundColor;
-        $timeFormatCheckbox[0].checked = localStorage.twentyFourHourFormat === 'true';
+
+    }
+
+    if (localStorage.animateSeconds) {
+        console.log('Animate seconds: '+localStorage.animateSeconds);
+        $animateSecondsCheckbox[0].checked = localStorage.animateSeconds === 'true';
     }
 }
 
 function getAndStoreConfigData() {
     var $backgroundColorPicker = $('#backgroundColorPicker');
-    var $timeFormatCheckbox = $('#timeFormatCheckbox');
+    var $animateSecondsCheckbox = $('#animateSecondsCheckbox');
 
     var options = {
         backgroundColor: $backgroundColorPicker.val(),
-        twentyFourHourFormat: $timeFormatCheckbox[0].checked
+        animateSeconds: $animateSecondsCheckbox[0].checked
     };
 
     localStorage.backgroundColor = options.backgroundColor;
-    localStorage.twentyFourHourFormat = options.twentyFourHourFormat;
+    localStorage.animateSeconds = options.animateSeconds;
 
     console.log('Got options: ' + JSON.stringify(options));
     return options;

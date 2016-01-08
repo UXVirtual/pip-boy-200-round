@@ -3,6 +3,7 @@ Pebble.addEventListener('ready', function() {
 });
 
 Pebble.addEventListener('showConfiguration', function() {
+    //var url = 'http://michael.local/pip-boy-200-round/config/public/';
     var url = 'http://michael.local:9000';
 
     console.log('Showing configuration page: ' + url);
@@ -18,7 +19,7 @@ Pebble.addEventListener('webviewclosed', function(e) {
     if (configData.backgroundColor) {
         Pebble.sendAppMessage({
             backgroundColor: parseInt(configData.backgroundColor, 16),
-            twentyFourHourFormat: configData.twentyFourHourFormat
+            animateSeconds: configData.animateSeconds
         }, function() {
             console.log('Send successful!');
         }, function() {
