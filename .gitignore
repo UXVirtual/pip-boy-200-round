@@ -4,3 +4,4 @@ app/.lock-waf_darwin_build
 online/public/jspm_packages
 node_modules
 online/public/assets
+online/public/bower_components
