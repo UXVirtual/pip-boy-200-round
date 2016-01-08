@@ -1,6 +1,11 @@
 {
-    "appKeys": {},
-    "capabilities": [],
+    "appKeys": {
+        "backgroundColor": 0,
+        "twentyFourHourFormat": 1
+    },
+    "capabilities": [
+        "configurable"
+    ],
     "companyName": "UXVirtual",
     "longName": "Pip-Boy 200",
     "projectType": "native",
