@@ -209,9 +209,27 @@ static void update_time() {
 
 }
 
+static void update_text_color() {
+
+    int background_color = persist_read_int(CONFIG_KEY_BACKGROUND_COLOR);
+
+    #if defined(PBL_BW)
+       text_layer_set_text_color(s_time_layer, GColorWhite);
+       text_layer_set_text_color(current_date_layer, GColorWhite);
+      #else
+        if(background_color == 1){
+            text_layer_set_text_color(s_time_layer, GColorRed);
+            text_layer_set_text_color(current_date_layer, GColorRed);
+        }else{
+            text_layer_set_text_color(s_time_layer, GColorGreen);
+            text_layer_set_text_color(current_date_layer, GColorGreen);
+        }
+      #endif
+}
+
 static void set_text_to_window() {
 
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Updating background bitmaps");
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Updating text bitmaps");
 
   //Time TextLayer 
   s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BEBASNEUE_60));
@@ -227,16 +245,7 @@ static void set_text_to_window() {
 
   text_layer_set_background_color(s_time_layer, GColorClear);
 
-  #if defined(PBL_BW)
-   text_layer_set_text_color(s_time_layer, GColorWhite);
-  #else
-    if(background_color == 1){
-        text_layer_set_text_color(s_time_layer, GColorRed);
-    }else{
-        text_layer_set_text_color(s_time_layer, GColorGreen);
-    }
 
-  #endif
 
   text_layer_set_text(s_time_layer, "0000");
   text_layer_set_font(s_time_layer, s_time_font);
@@ -263,15 +272,7 @@ static void set_text_to_window() {
 
   text_layer_set_background_color(current_date_layer, GColorClear);
 
-  #if defined(PBL_BW)
-   text_layer_set_text_color(current_date_layer, GColorWhite);
-  #else
-    if(background_color == 1){
-        text_layer_set_text_color(current_date_layer, GColorRed);
-    }else{
-        text_layer_set_text_color(current_date_layer, GColorGreen);
-    }
-  #endif
+
 
 
   text_layer_set_text(current_date_layer, "00.00 000");
@@ -346,6 +347,69 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
     }
 }
 
+static void update_background(){
+    // Get a tm structure
+    time_t temp = time(NULL);
+    struct tm *tick_time = localtime(&temp);
+
+    strftime(timephase_buffer, sizeof("00"), "%p", tick_time);
+
+    timeOfDay = timephase_buffer[0];
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "c2: %d", timeOfDay);
+
+    #if defined(PBL_BW)
+
+        set_clock_bitmap_bw(timeOfDay);
+
+    #elif defined(PBL_RECT)
+
+        set_clock_bitmap_rect(timeOfDay);
+
+    #elif defined(PBL_ROUND)
+
+        set_clock_bitmap_round(timeOfDay);
+
+    #endif
+
+    bitmap_layer_set_bitmap(clock_layer, clock_bitmap);
+}
+
+static void set_background(){
+    // Get a tm structure
+    time_t temp = time(NULL);
+    struct tm *tick_time = localtime(&temp);
+
+    strftime(timephase_buffer, sizeof("00"), "%p", tick_time);
+
+    timeOfDay = timephase_buffer[0];
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "c2: %d", timeOfDay);
+
+    #if defined(PBL_BW)
+
+        set_clock_bitmap_bw(timeOfDay);
+        clock_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
+        //s_canvas_layer = layer_create(GRect(0, 0, 144, 168));
+
+    #elif defined(PBL_RECT)
+
+        set_clock_bitmap_rect(timeOfDay);
+        clock_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
+        //s_canvas_layer = layer_create(GRect(0, 0, 144, 168));
+
+    #elif defined(PBL_ROUND)
+
+        set_clock_bitmap_round(timeOfDay);
+        clock_layer = bitmap_layer_create(GRect(0, 0, 180, 180));
+        s_canvas_layer = layer_create(GRect(26, 25, 130, 130));
+
+        // Set LayerUpdateProc to draw bitmap
+        layer_set_update_proc(s_canvas_layer, canvas_update_proc);
+
+    #endif
+
+    bitmap_layer_set_bitmap(clock_layer, clock_bitmap);
+}
+
 static void main_window_load(Window *window) {
   //ACTION: Create GBitmap, then set to created BitmapLayer
 
@@ -353,39 +417,7 @@ static void main_window_load(Window *window) {
     animate_seconds = persist_read_bool(CONFIG_KEY_ANIMATE_SECONDS);
   }
 
-// Get a tm structure
-  time_t temp = time(NULL);
-  struct tm *tick_time = localtime(&temp);
-
-  strftime(timephase_buffer, sizeof("00"), "%p", tick_time);
-
-  timeOfDay = timephase_buffer[0];
-  //APP_LOG(APP_LOG_LEVEL_DEBUG, "c2: %d", timeOfDay);
-
-  #if defined(PBL_BW)
-
-    set_clock_bitmap_bw(timeOfDay);
-    clock_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
-    //s_canvas_layer = layer_create(GRect(0, 0, 144, 168));
-
-  #elif defined(PBL_RECT)
-
-    set_clock_bitmap_rect(timeOfDay);
-    clock_layer = bitmap_layer_create(GRect(0, 0, 144, 168));
-    //s_canvas_layer = layer_create(GRect(0, 0, 144, 168));
-
-  #elif defined(PBL_ROUND)
-
-    set_clock_bitmap_round(timeOfDay);
-    clock_layer = bitmap_layer_create(GRect(0, 0, 180, 180));
-    s_canvas_layer = layer_create(GRect(26, 25, 130, 130));
-
-    // Set LayerUpdateProc to draw bitmap
-    layer_set_update_proc(s_canvas_layer, canvas_update_proc);
-
-  #endif
-
-  bitmap_layer_set_bitmap(clock_layer, clock_bitmap);
+  set_background();
 
 
 
@@ -411,6 +443,8 @@ static void main_window_load(Window *window) {
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(bt_layer));*/
   
   set_text_to_window();
+
+  update_text_color();
     
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(current_date_layer));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_time_layer));
@@ -479,8 +513,12 @@ static void in_received_handler(DictionaryIterator *received, void *context) {
 
       //APP_LOG(APP_LOG_LEVEL_DEBUG, "Got new background actual: %d",persist_read_int(CONFIG_KEY_BACKGROUND_COLOR));
 
-      set_text_to_window();
-    }
+      update_background();
+
+      update_text_color();
+
+      //set_text_to_window();
+  }
 
 //APP_LOG(APP_LOG_LEVEL_DEBUG, "Will set animate seconds? %d",animate_seconds_t->length);
 
