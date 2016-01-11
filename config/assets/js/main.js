@@ -51,6 +51,8 @@ function getAndStoreConfigData() {
     var $backgroundColorPicker = $('#backgroundColorPicker');
     var $animateSecondsCheckbox = $('#animateSecondsCheckbox');
 
+    console.log('Is checked: '+$animateSecondsCheckbox[0].checked);
+
     var options = {
         backgroundColor: $backgroundColorPicker.val(),
         animateSeconds: $animateSecondsCheckbox[0].checked

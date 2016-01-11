@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#define KEY_BACKGROUND_COLOR 1
-#define KEY_ANIMATE_SECONDS 1
+//NOTE: make sure the values of these keys match the equivalents in appinfo.json or their values will be NULL!
+#define CONFIG_KEY_BACKGROUND_COLOR (1)
+#define CONFIG_KEY_ANIMATE_SECONDS false
   
 static Window *s_main_window;
 
@@ -265,7 +266,7 @@ static char* floatToString(char* buffer, int bufferSize, double number)
 
 static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
 
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "c2: %d", animate_seconds);
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "c2: %d", animate_seconds);
 
     if(animate_seconds == true){
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "Updating canvas");
@@ -306,7 +307,7 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
 
           //doSecondIndicatorUpdate = false;
     }else{
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "Skipping canvas update");
+        //APP_LOG(APP_LOG_LEVEL_DEBUG, "Skipping canvas update");
     }
 }
 
@@ -319,13 +320,13 @@ static void set_background_and_text_color(int color) {
 static void main_window_load(Window *window) {
   //ACTION: Create GBitmap, then set to created BitmapLayer
 
-  if (persist_read_int(KEY_BACKGROUND_COLOR)) {
-      int background_color = persist_read_int(KEY_BACKGROUND_COLOR);
+  if (persist_read_int(CONFIG_KEY_BACKGROUND_COLOR)) {
+      int background_color = persist_read_int(CONFIG_KEY_BACKGROUND_COLOR);
       set_background_and_text_color(background_color);
     }
 
-  if (persist_read_bool(KEY_ANIMATE_SECONDS)) {
-    animate_seconds = persist_read_bool(KEY_ANIMATE_SECONDS);
+  if (persist_read_bool(CONFIG_KEY_ANIMATE_SECONDS)) {
+    animate_seconds = persist_read_bool(CONFIG_KEY_ANIMATE_SECONDS);
   }
 
 // Get a tm structure
@@ -437,32 +438,59 @@ static void bt_handler(bool connected) {
 }
 
 
-static void in_received_handler(DictionaryIterator *iter, void *context) {
+static void in_received_handler(DictionaryIterator *received, void *context) {
 
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Got data from config page");
 
 
-  Tuple *background_color_t = dict_find(iter, KEY_BACKGROUND_COLOR);
-  Tuple *animate_seconds_t = dict_find(iter, KEY_ANIMATE_SECONDS);
+  Tuple *background_color_t = dict_find(received, CONFIG_KEY_BACKGROUND_COLOR);
+  Tuple *animate_seconds_t = dict_find(received, CONFIG_KEY_ANIMATE_SECONDS);
 
   if (background_color_t) {
-      int background_color = background_color_t->value->int32;
+      int background_color = background_color_t->value->int8;
 
-      persist_write_int(KEY_BACKGROUND_COLOR, background_color);
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "Setting background value %d",background_color);
+
+      persist_write_int(CONFIG_KEY_BACKGROUND_COLOR, background_color);
 
       set_background_and_text_color(background_color);
+
+
     }
 
-  if (animate_seconds_t) {
-    animate_seconds = animate_seconds_t->value->int8;
+//APP_LOG(APP_LOG_LEVEL_DEBUG, "Will set animate seconds? %d",animate_seconds_t->length);
 
-    persist_write_bool(KEY_ANIMATE_SECONDS, animate_seconds);
+if(animate_seconds_t == NULL){
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Animate seconds value is null");
+}
+
+
+//animation_seconds_t Tuple seems to be empty every time
+  if (animate_seconds_t) {
+
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Setting animate seconds value %s",animate_seconds_t->value->cstring);
+
+        if (strcmp(animate_seconds_t->value->cstring, "T") == 0){
+            APP_LOG(APP_LOG_LEVEL_DEBUG, "Setting animate seconds value to true");
+            persist_write_bool(CONFIG_KEY_ANIMATE_SECONDS, true);
+            animate_seconds = true;
+        }else{
+            APP_LOG(APP_LOG_LEVEL_DEBUG, "Setting animate seconds value to false");
+            persist_write_bool(CONFIG_KEY_ANIMATE_SECONDS, false);
+            animate_seconds = false;
+        }
+
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Got new animate seconds actual: %d",animate_seconds);
   }
 }
 
-static void in_dropped_handler(AppMessageResult reason, void *context) {
-
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Problem receiving data from config page: %d",reason);
+void in_dropped_handler(AppMessageResult reason, void *ctx)
+{
+    app_log(APP_LOG_LEVEL_WARNING,
+            __FILE__,
+            __LINE__,
+            "Message dropped, reason code %d",
+            reason);
 }
 
 static void out_failed_handler(DictionaryIterator *iterator, AppMessageResult reason, void *context) {

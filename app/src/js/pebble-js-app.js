@@ -17,10 +17,17 @@ Pebble.addEventListener('webviewclosed', function(e) {
     console.log('Configuration page returned: ' + JSON.stringify(configData));
 
     if (configData.backgroundColor) {
-        Pebble.sendAppMessage({
-            backgroundColor: parseInt(configData.backgroundColor, 16),
-            animateSeconds: configData.animateSeconds
-        }, function() {
+
+        console.log('Animate seconds value: '+configData.animateSeconds);
+
+        var configObject = {
+            backgroundColor: parseInt(configData.backgroundColor, 8),
+            animateSeconds: (configData.animateSeconds) ? "T" : "F" //must be int or will not be sent to the watch correctly
+        };
+
+        console.log('ConfigObject from pebble',JSON.stringify(configObject));
+
+        Pebble.sendAppMessage(configObject, function() {
             console.log('Send successful!');
         }, function() {
             console.log('Send failed!');
