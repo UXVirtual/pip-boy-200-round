@@ -3,7 +3,7 @@
 #include <ctype.h>
 
 //NOTE: make sure the values of these keys match the equivalents in appinfo.json or their values will be NULL!
-#define CONFIG_KEY_BACKGROUND_COLOR (1)
+#define CONFIG_KEY_BACKGROUND_COLOR (2)
 #define CONFIG_KEY_ANIMATE_SECONDS false
   
 static Window *s_main_window;
@@ -61,12 +61,27 @@ static void set_clock_bitmap_rect(){
 }
 
 static void set_clock_bitmap_round(){
+
+    int background_color = persist_read_int(CONFIG_KEY_BACKGROUND_COLOR);
+
     if(clock_is_24h_style() == true){
-        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round);
+        if(background_color == 1){
+            clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round_red);
+        }else{
+            clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round);
+        }
     }else if(timeOfDay == 'A'){
-        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round_am);
+        if(background_color == 1){
+            clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round_am_red);
+        }else{
+            clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round_am);
+        }
     }else if(timeOfDay == 'P'){
-        clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round_pm);
+        if(background_color == 1){
+            clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round_pm_red);
+        }else{
+            clock_bitmap = gbitmap_create_with_resource(RESOURCE_ID_bg_image_round_pm);
+        }
     }
 }
 
@@ -196,8 +211,12 @@ static void update_time() {
 
 static void set_text_to_window() {
 
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Updating background bitmaps");
+
   //Time TextLayer 
   s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BEBASNEUE_60));
+
+  int background_color = persist_read_int(CONFIG_KEY_BACKGROUND_COLOR);
 
   #if defined(PBL_RECT)
    s_time_layer = text_layer_create(GRect(18, 46, 108, 63));
@@ -211,7 +230,12 @@ static void set_text_to_window() {
   #if defined(PBL_BW)
    text_layer_set_text_color(s_time_layer, GColorWhite);
   #else
-   text_layer_set_text_color(s_time_layer, GColorGreen);
+    if(background_color == 1){
+        text_layer_set_text_color(s_time_layer, GColorRed);
+    }else{
+        text_layer_set_text_color(s_time_layer, GColorGreen);
+    }
+
   #endif
 
   text_layer_set_text(s_time_layer, "0000");
@@ -242,7 +266,11 @@ static void set_text_to_window() {
   #if defined(PBL_BW)
    text_layer_set_text_color(current_date_layer, GColorWhite);
   #else
-   text_layer_set_text_color(current_date_layer, GColorGreen);
+    if(background_color == 1){
+        text_layer_set_text_color(current_date_layer, GColorRed);
+    }else{
+        text_layer_set_text_color(current_date_layer, GColorGreen);
+    }
   #endif
 
 
@@ -269,6 +297,8 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
     //APP_LOG(APP_LOG_LEVEL_DEBUG, "c2: %d", animate_seconds);
 
     if(animate_seconds == true){
+        int background_color = persist_read_int(CONFIG_KEY_BACKGROUND_COLOR);
+
         //APP_LOG(APP_LOG_LEVEL_DEBUG, "Updating canvas");
 
         // Get a tm structure
@@ -290,7 +320,12 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
           //APP_LOG(APP_LOG_LEVEL_DEBUG, "Percentage: %d", ceil((lastSecond/60.0)*360));
 
           graphics_context_set_stroke_width(ctx, 4);
-          graphics_context_set_stroke_color(ctx, GColorDarkGreen); //GColorIslamicGreen
+          if(background_color == 1){
+            graphics_context_set_stroke_color(ctx, GColorBulgarianRose); //GColorIslamicGreen
+          }else{
+            graphics_context_set_stroke_color(ctx, GColorDarkGreen); //GColorIslamicGreen
+          }
+
           graphics_draw_arc(ctx, bounds, GOvalScaleModeFillCircle, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE((lastSecond/60.0)*360));
 
 
@@ -311,19 +346,8 @@ static void canvas_update_proc(Layer *this_layer, GContext *ctx) {
     }
 }
 
-static void set_background_and_text_color(int color) {
-  //GColor background_color = GColorFromHEX(color);
-  //window_set_background_color(s_main_window, background_color);
-  //text_layer_set_text_color(s_text_layer, gcolor_legible_over(background_color));
-}
-
 static void main_window_load(Window *window) {
   //ACTION: Create GBitmap, then set to created BitmapLayer
-
-  if (persist_read_int(CONFIG_KEY_BACKGROUND_COLOR)) {
-      int background_color = persist_read_int(CONFIG_KEY_BACKGROUND_COLOR);
-      set_background_and_text_color(background_color);
-    }
 
   if (persist_read_bool(CONFIG_KEY_ANIMATE_SECONDS)) {
     animate_seconds = persist_read_bool(CONFIG_KEY_ANIMATE_SECONDS);
@@ -451,11 +475,11 @@ static void in_received_handler(DictionaryIterator *received, void *context) {
 
       APP_LOG(APP_LOG_LEVEL_DEBUG, "Setting background value %d",background_color);
 
-      persist_write_int(CONFIG_KEY_BACKGROUND_COLOR, background_color);
+      persist_write_int(CONFIG_KEY_BACKGROUND_COLOR, background_color_t->value->int8);
 
-      set_background_and_text_color(background_color);
+      //APP_LOG(APP_LOG_LEVEL_DEBUG, "Got new background actual: %d",persist_read_int(CONFIG_KEY_BACKGROUND_COLOR));
 
-
+      set_text_to_window();
     }
 
 //APP_LOG(APP_LOG_LEVEL_DEBUG, "Will set animate seconds? %d",animate_seconds_t->length);

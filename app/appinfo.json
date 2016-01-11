@@ -1,6 +1,6 @@
 {
     "appKeys": {
-        "backgroundColor": 1,
+        "backgroundColor": 2,
         "animateSeconds": false
     },
     "capabilities": [
@@ -24,6 +24,21 @@
             {
                 "file": "images/bg-round-pm.png",
                 "name": "bg_image_round_pm",
+                "type": "png"
+            },
+            {
+                "file": "images/bg-round-red.png",
+                "name": "bg_image_round_red",
+                "type": "png"
+            },
+            {
+                "file": "images/bg-round-am-red.png",
+                "name": "bg_image_round_am_red",
+                "type": "png"
+            },
+            {
+                "file": "images/bg-round-pm-red.png",
+                "name": "bg_image_round_pm_red",
                 "type": "png"
             },
             {
